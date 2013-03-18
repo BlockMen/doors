@@ -26,7 +26,7 @@ following Textures created by BlockMen (WTFPL):
   door_glass.png
   door_trapdoor.png
 
-All other textures (created by PilzAdam): WTFPL
+All other textures created by PilzAdam (WTFPL)
 
 
 License of sounds
