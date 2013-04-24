@@ -1,6 +1,6 @@
 Minetest 0.4 mod: doors
 =======================
-version: 1.2.2
+version: 1.2.4
 
 License of source code:
 -----------------------

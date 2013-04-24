@@ -20,16 +20,16 @@ local function is_right(pos, clicker)
 	local r1 = minetest.env:get_node({x=pos.x+1, y=pos.y, z=pos.z})
 	local r2 = minetest.env:get_node({x=pos.x, y=pos.y, z=pos.z+1})
 	if string.find(r1.name, "door_") or string.find(r2.name, "door_") then
-		return false
-	else
 		return true
+	else
+		return false
 	end
 end
 
 function doors:register_door(name, def)
 	def.groups.not_in_creative_inventory = 1
 	
-	local box = {{-0.5, -0.5, -0.5,   0.5, 0.5, -0.5+1.5/16}}
+	local box = {{-0.5, -0.5, -0.5, 0.5, 0.5, -0.5+1.5/16}}
 	
 	if not def.node_box_bottom then
 		def.node_box_bottom = box
@@ -110,9 +110,10 @@ function doors:register_door(name, def)
 	local tt = def.tiles_top
 	local tb = def.tiles_bottom
 	
-	local function after_dig_node(pos, name)
-		if minetest.env:get_node(pos).name == name then
-			minetest.env:remove_node(pos)
+	local function after_dig_node(pos, name, digger)
+		local node = minetest.env:get_node(pos)
+		if node.name == name then
+			minetest.node_dig(pos, node, digger)
 		end
 	end
 	
@@ -161,16 +162,16 @@ function doors:register_door(name, def)
 		
 		after_dig_node = function(pos, oldnode, oldmetadata, digger)
 			pos.y = pos.y+1
-			after_dig_node(pos, name.."_t_1")
+			after_dig_node(pos, name.."_t_1", digger)
 		end,
 		
 		on_rightclick = function(pos, node, clicker)
 			if check_player_priv(pos, clicker) then
 				on_rightclick(pos, 1, name.."_t_1", name.."_b_2", name.."_t_2", {1,2,3,0})
 				if is_right(pos, clicker) then
-					minetest.sound_play("door_close", {gain = 0.3, max_hear_distance = 10})					
+					minetest.sound_play("door_close", {pos = pos, gain = 0.3, max_hear_distance = 10})					
 				else
-					minetest.sound_play("door_open", {gain = 0.3, max_hear_distance = 10})
+					minetest.sound_play("door_open", {pos = pos, gain = 0.3, max_hear_distance = 10})
 				end
 			end
 		end,
@@ -182,7 +183,7 @@ function doors:register_door(name, def)
 		tiles = {tt[2], tt[2], tt[2], tt[2], tt[1], tt[1].."^[transformfx"},
 		paramtype = "light",
 		paramtype2 = "facedir",
-		drop = name,
+		drop = "",
 		drawtype = "nodebox",
 		node_box = {
 			type = "fixed",
@@ -196,16 +197,16 @@ function doors:register_door(name, def)
 		
 		after_dig_node = function(pos, oldnode, oldmetadata, digger)
 			pos.y = pos.y-1
-			after_dig_node(pos, name.."_b_1")
+			after_dig_node(pos, name.."_b_1", digger)
 		end,
 		
 		on_rightclick = function(pos, node, clicker)
 			if check_player_priv(pos, clicker) then
 				on_rightclick(pos, -1, name.."_b_1", name.."_t_2", name.."_b_2", {1,2,3,0})
 				if is_right(pos, clicker) then
-					minetest.sound_play("door_close", {gain = 0.3, max_hear_distance = 10})					
+					minetest.sound_play("door_close", {pos = pos, gain = 0.3, max_hear_distance = 10})					
 				else
-					minetest.sound_play("door_open", {gain = 0.3, max_hear_distance = 10})
+					minetest.sound_play("door_open", {pos = pos, gain = 0.3, max_hear_distance = 10})
 				end
 			end
 		end,
@@ -231,16 +232,16 @@ function doors:register_door(name, def)
 		
 		after_dig_node = function(pos, oldnode, oldmetadata, digger)
 			pos.y = pos.y+1
-			after_dig_node(pos, name.."_t_2")
+			after_dig_node(pos, name.."_t_2", digger)
 		end,
 		
 		on_rightclick = function(pos, node, clicker)
 			if check_player_priv(pos, clicker) then
 				on_rightclick(pos, 1, name.."_t_2", name.."_b_1", name.."_t_1", {3,0,1,2})
 				if is_right(pos, clicker) then
-					minetest.sound_play("door_open", {gain = 0.3, max_hear_distance = 10})					
+					minetest.sound_play("door_open", {pos = pos, gain = 0.3, max_hear_distance = 10})					
 				else
-					minetest.sound_play("door_close", {gain = 0.3, max_hear_distance = 10})
+					minetest.sound_play("door_close", {pos = pos, gain = 0.3, max_hear_distance = 10})
 				end
 			end
 		end,
@@ -252,7 +253,7 @@ function doors:register_door(name, def)
 		tiles = {tt[2], tt[2], tt[2], tt[2], tt[1].."^[transformfx", tt[1]},
 		paramtype = "light",
 		paramtype2 = "facedir",
-		drop = name,
+		drop = "",
 		drawtype = "nodebox",
 		node_box = {
 			type = "fixed",
@@ -266,16 +267,16 @@ function doors:register_door(name, def)
 		
 		after_dig_node = function(pos, oldnode, oldmetadata, digger)
 			pos.y = pos.y-1
-			after_dig_node(pos, name.."_b_2")
+			after_dig_node(pos, name.."_b_2", digger)
 		end,
 		
 		on_rightclick = function(pos, node, clicker)
 			if check_player_priv(pos, clicker) then
 				on_rightclick(pos, -1, name.."_b_2", name.."_t_1", name.."_b_1", {3,0,1,2})
 				if is_right(pos, clicker) then
-					minetest.sound_play("door_open", {gain = 0.3, max_hear_distance = 10})					
+					minetest.sound_play("door_open", {pos = pos, gain = 0.3, max_hear_distance = 10})					
 				else
-					minetest.sound_play("door_close", {gain = 0.3, max_hear_distance = 10})
+					minetest.sound_play("door_close", {pos = pos, gain = 0.3, max_hear_distance = 10})
 				end
 			end
 		end,
@@ -362,11 +363,11 @@ local function punch(pos)
 	oben = {x=pos.x, y=pos.y+1, z=pos.z}
 		if state == 1 then
 			state = 0
-			minetest.sound_play("door_close", {to_player = puncher, gain = 0.3, max_hear_distance = 10})
+			minetest.sound_play("door_close", {pos = pos, gain = 0.3, max_hear_distance = 10})
 			tmp_node = {name="doors:trapdoor", param1=me.param1, param2=me.param2}
 		else
 			state = 1
-			minetest.sound_play("door_open", {to_player = puncher, gain = 0.3, max_hear_distance = 10})
+			minetest.sound_play("door_open", {pos = pos, gain = 0.3, max_hear_distance = 10})
 			tmp_node = {name="doors:trapdoor_open", param1=me.param1, param2=me.param2}
 		end
 		update_door(pos, tmp_node)
