@@ -1,6 +1,6 @@
 Minetest 0.4 mod: doors
 =======================
-version: 1.2.4
+version: 1.2.6
 
 License of source code:
 -----------------------
@@ -24,9 +24,13 @@ following Textures created by Fernando Zapata (CC BY-SA 3.0):
 
 following Textures created by BlockMen (WTFPL):
   door_glass.png
+  door_glass_a.png
+  door_glass_b.png
+  door_glass_side.png
   door_trapdoor.png
+  door_trapdoor_side.png
 
-All other textures created by PilzAdam (WTFPL)
+All other textures (created by PilzAdam): WTFPL
 
 
 License of sounds

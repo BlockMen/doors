@@ -16,13 +16,15 @@ doors = {}
 --    only_placer_can_open: if true only the player who placed the door can
 --                          open it
 
-local function is_right(pos, clicker) 
-	local r1 = minetest.env:get_node({x=pos.x+1, y=pos.y, z=pos.z})
-	local r2 = minetest.env:get_node({x=pos.x, y=pos.y, z=pos.z+1})
+local function is_right(pos) 
+	local r1 = minetest.env:get_node({x=pos.x-1, y=pos.y, z=pos.z})
+	local r2 = minetest.env:get_node({x=pos.x, y=pos.y, z=pos.z-1})
 	if string.find(r1.name, "door_") or string.find(r2.name, "door_") then
-		return true
-	else
-		return false
+		if string.find(r1.name, "_1") or string.find(r2.name, "_1") then
+			return true
+		else
+			return false
+		end
 	end
 end
 
@@ -133,6 +135,19 @@ function doors:register_door(name, def)
 		meta = minetest.env:get_meta(pos):to_table()
 		minetest.env:set_node(pos, {name=replace, param2=p2})
 		minetest.env:get_meta(pos):from_table(meta)
+
+		local snd_1 = "_close"
+		local snd_2 = "_open"
+		if params[1] == 3 then
+			snd_1 = "_open"
+			snd_2 = "_close"
+		end
+
+		if is_right(pos) then
+			minetest.sound_play("door"..snd_1, {pos = pos, gain = 0.3, max_hear_distance = 10})					
+		else
+			minetest.sound_play("door"..snd_2, {pos = pos, gain = 0.3, max_hear_distance = 10})
+		end
 	end
 	
 	local function check_player_priv(pos, player)
@@ -168,11 +183,6 @@ function doors:register_door(name, def)
 		on_rightclick = function(pos, node, clicker)
 			if check_player_priv(pos, clicker) then
 				on_rightclick(pos, 1, name.."_t_1", name.."_b_2", name.."_t_2", {1,2,3,0})
-				if is_right(pos, clicker) then
-					minetest.sound_play("door_close", {pos = pos, gain = 0.3, max_hear_distance = 10})					
-				else
-					minetest.sound_play("door_open", {pos = pos, gain = 0.3, max_hear_distance = 10})
-				end
 			end
 		end,
 		
@@ -203,11 +213,6 @@ function doors:register_door(name, def)
 		on_rightclick = function(pos, node, clicker)
 			if check_player_priv(pos, clicker) then
 				on_rightclick(pos, -1, name.."_b_1", name.."_t_2", name.."_b_2", {1,2,3,0})
-				if is_right(pos, clicker) then
-					minetest.sound_play("door_close", {pos = pos, gain = 0.3, max_hear_distance = 10})					
-				else
-					minetest.sound_play("door_open", {pos = pos, gain = 0.3, max_hear_distance = 10})
-				end
 			end
 		end,
 		
@@ -238,11 +243,6 @@ function doors:register_door(name, def)
 		on_rightclick = function(pos, node, clicker)
 			if check_player_priv(pos, clicker) then
 				on_rightclick(pos, 1, name.."_t_2", name.."_b_1", name.."_t_1", {3,0,1,2})
-				if is_right(pos, clicker) then
-					minetest.sound_play("door_open", {pos = pos, gain = 0.3, max_hear_distance = 10})					
-				else
-					minetest.sound_play("door_close", {pos = pos, gain = 0.3, max_hear_distance = 10})
-				end
 			end
 		end,
 		
@@ -273,11 +273,6 @@ function doors:register_door(name, def)
 		on_rightclick = function(pos, node, clicker)
 			if check_player_priv(pos, clicker) then
 				on_rightclick(pos, -1, name.."_b_2", name.."_t_1", name.."_b_1", {3,0,1,2})
-				if is_right(pos, clicker) then
-					minetest.sound_play("door_open", {pos = pos, gain = 0.3, max_hear_distance = 10})					
-				else
-					minetest.sound_play("door_close", {pos = pos, gain = 0.3, max_hear_distance = 10})
-				end
 			end
 		end,
 		
@@ -325,8 +320,8 @@ doors:register_door("doors:door_glass", {
 	description = "Glass Door",
 	inventory_image = "door_glass.png",
 	groups = {snappy=1,cracky=1,oddly_breakable_by_hand=2,door=1},
-	tiles_bottom = {"default_glass.png", "door_grey.png"},
-	tiles_top = {"default_glass.png", "door_grey.png"},
+	tiles_bottom = {"door_glass_b.png", "door_glass_side.png"},
+	tiles_top = {"door_glass_a.png", "door_glass_side.png"},
 })
 
 minetest.register_craft({
@@ -379,7 +374,7 @@ minetest.register_node("doors:trapdoor", {
 	description = "Trapdoor",
 	inventory_image = "door_trapdoor.png",
 	drawtype = "nodebox",
-	tiles = {"door_trapdoor.png", "door_trapdoor.png",  "default_wood.png",  "default_wood.png", "default_wood.png", "default_wood.png"},
+	tiles = {"door_trapdoor.png", "door_trapdoor.png",  "default_trapdoor_side.png",  "default_trapdoor_side.png", "default_trapdoor_side.png", "default_trapdoor_side.png"},
 	paramtype = "light",
 	paramtype2 = "facedir",
 	groups = {snappy=1,choppy=2,oddly_breakable_by_hand=2,flammable=2,door=1},
@@ -404,7 +399,7 @@ minetest.register_node("doors:trapdoor", {
 
 minetest.register_node("doors:trapdoor_open", {
 	drawtype = "nodebox",
-	tiles = {"default_wood.png", "default_wood.png",  "default_wood.png",  "default_wood.png", "door_trapdoor.png", "door_trapdoor.png"},
+	tiles = {"door_trapdoor_side.png", "door_trapdoor_side.png",  "door_trapdoor_side.png",  "door_trapdoor_side.png", "door_trapdoor.png", "door_trapdoor.png"},
 	paramtype = "light",
 	paramtype2 = "facedir",
 	pointable = true,
