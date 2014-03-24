@@ -1,0 +1,8 @@
+# Template
+
+Owned by %s =
+Wooden Door = 
+Steel Door = 
+Glass Door = 
+Obsidian Glass Door = 
+Trapdoor = 
