@@ -1,0 +1,8 @@
+# Translation by Xanthin
+
+Owned by %s = Gehoert %s
+Wooden Door = Holztuer
+Steel Door = Stahltuer
+Glass Door = Glastuer
+Obsidian Glass Door = Obsidianglastuer
+Trapdoor = Falltuer
